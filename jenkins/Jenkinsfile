@@ -1,15 +1,4 @@
 pipeline {   
-    agent {
-            kubernetes {
-                label "pod-template-${UUID.randomUUID().toString()}"
-                containers: [
-                    containerTemplate {
-                        name 'owasp-zap'
-                        image 'https://hub.docker.com/r/owasp/zap2docker-stable'
-                        ttyEnabled true
-                }
-            }
-        }
     stages {
         stage('Build') {
             steps {
@@ -31,6 +20,6 @@ pipeline {
                 bat './jenkins/scripts/deliver.sh'
             }
         }
-
-    }
+	}
+    
 }

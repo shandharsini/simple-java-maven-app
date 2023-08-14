@@ -1,6 +1,20 @@
 pipeline {   
-    agent any
+
+    @Library(owasp-zap-scan-jenkins-sharedlib@master)	
+	
     stages {
+	    agent {
+            kubernetes {
+                label "pod-template-${UUID.randomUUID().toString()}"
+                containers: [
+                    containerTemplate {
+                        name 'owasp-zap'
+                        image 'https://hub.docker.com/r/owasp/zap2docker-stable'
+                        ttyEnabled true
+                }]
+            }
+        }
+
         stage('Build') {
             steps {
                 bat 'mvn -B -DskipTests clean package'
@@ -21,6 +35,24 @@ pipeline {
                 bat './jenkins/scripts/deliver.sh'
             }
         }
+		
+		stage ("Integration Tests with Zap Active Scan") {
+          steps{
+            script{
+                container("owasp-zap")  {
+                    runOwaspZapProxy()
+                }
+                container("gradle/maven")  {
+                    // Run the Integration test with Zap Proxy
+                }
+                container("owasp-zap")  {
+                    runActivescan()
+                    generateHtmlReport()
+                }
+            }
+          }
+        }
+
 	}
     
 }

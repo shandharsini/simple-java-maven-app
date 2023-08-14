@@ -3,6 +3,10 @@
 
 pipeline {   
 
+    library identifier: 'jenkins-sharedlib-zap-scan@master', retriever: modernSCM([$class: 'GitSCMSource',
+        remote: 'remote_git_repo_name',
+        credentialsId: 'jenkinsPAT'])
+
     stages {
 	    agent {
             kubernetes {

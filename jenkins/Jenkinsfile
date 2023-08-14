@@ -1,7 +1,8 @@
+
+@Library(owasp-zap-scan-jenkins-sharedlib@master)	
+
 pipeline {   
 
-    @Library(owasp-zap-scan-jenkins-sharedlib@master)	
-	
     stages {
 	    agent {
             kubernetes {
